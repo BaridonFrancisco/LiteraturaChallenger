@@ -12,6 +12,7 @@ public class Author {
     private String fullName;
     private LocalDate birthDate;
     private LocalDate deathDate;
+    @Transient
     List<Book> listaBook;
 
 

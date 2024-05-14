@@ -12,8 +12,18 @@ public record DateAuthors(
         @JsonAlias("death_year")
         String deathYear
 
+
+
+
 ) {
 
 
-
+        @Override
+        public String toString() {
+                return "DateAuthors{" +
+                        "name='" + name + '\'' +
+                        ", birthDate='" + birthDate + '\'' +
+                        ", deathYear='" + deathYear + '\'' +
+                        '}';
+        }
 }

@@ -1,9 +1,9 @@
 package com.EbookApi.apiEBook.model;
 
-
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Arrays;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -22,6 +22,14 @@ public record DateBook(
 
 ) {
 
-
-
+        @Override
+        public String toString() {
+                return "DateBook{" +
+                        "title='" + title + '\'' +
+                        ", listaAutores=" + listaAutores +
+                        ", languages=" + Arrays.toString(languages) +
+                        ", downloadCount=" + downloadCount +
+                        ", copyright=" + copyright +
+                        '}';
+        }
 }
