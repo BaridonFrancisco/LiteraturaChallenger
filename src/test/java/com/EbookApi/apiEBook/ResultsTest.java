@@ -1,15 +1,11 @@
 package com.EbookApi.apiEBook;
 
-
 import com.EbookApi.apiEBook.model.DateResult;
 import com.EbookApi.apiEBook.service.TransformData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;

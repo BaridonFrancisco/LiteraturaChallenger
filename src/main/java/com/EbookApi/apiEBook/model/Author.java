@@ -12,7 +12,7 @@ public class Author {
     private String fullName;
     private LocalDate birthDate;
     private LocalDate deathDate;
-    @Transient
+    @OneToMany(mappedBy = "author",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     List<Book> listaBook;
 
 
