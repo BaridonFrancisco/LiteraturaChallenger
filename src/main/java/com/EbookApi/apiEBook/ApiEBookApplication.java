@@ -1,6 +1,7 @@
 package com.EbookApi.apiEBook;
 
-import com.EbookApi.apiEBook.menu.Menu;
+
+import com.EbookApi.apiEBook.repository.AuthorRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +18,7 @@ public class ApiEBookApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Menu menu=new Menu();
-		menu.startAPIMenu();
+		/*Menu menu=new Menu();
+		menu.startAPIMenu();*/
 	}
 }

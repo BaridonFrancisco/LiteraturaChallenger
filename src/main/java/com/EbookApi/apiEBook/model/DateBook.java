@@ -18,7 +18,9 @@ public record DateBook(
         @JsonAlias("download_count")
         Long downloadCount,
         @JsonAlias("copyright")
-        Boolean copyright
+        Boolean copyright,
+        @JsonAlias("subjects")
+        String[]genero
 
 ) {
 
