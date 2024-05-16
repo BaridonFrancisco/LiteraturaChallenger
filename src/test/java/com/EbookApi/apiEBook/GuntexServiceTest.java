@@ -5,12 +5,9 @@ import com.EbookApi.apiEBook.service.TransformData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
@@ -61,8 +58,7 @@ public class GuntexServiceTest {
     }
 
     public Book getBook(DateBook dateBook) {
-        Arrays.stream(dateBook.genero())
-                .filter(gender->gender.contains(""))
+        getGender2(dateBook.gender());
        /* Author author=dateBook.listaAutores().stream()
                 .findFirst()
                 .map(a->new Author(null,LocalDate.parse(a.birthDate()),LocalDate.parse(a.deathYear()),new ArrayList<>())).get();*/
@@ -81,5 +77,40 @@ public class GuntexServiceTest {
                         null))
                 .get();
     }
+    private void getGender(String[] genders){
+       var re= Arrays.stream(Arrays.stream(genders)
+                .map(gender->{
+                    StringBuilder result= new StringBuilder();
+                    for(Gender genAux:Gender.values()){
+                        if(gender.contains(Gender.getValue(genAux))){
+                            result.append(Gender.getValue(genAux));
+                        }
+                    }
+                    return result;
+                })
+               .collect(Collectors.joining(","))
+               .split(","))
+               .collect(Collectors.collectingAndThen(Collectors.groupingBy(Function.identity(),Collectors.counting()),
+                       map->map.entrySet().stream()
+                               .max(Map.Entry.comparingByValue(Comparator.naturalOrder())).get()));
+        System.out.println(re.getValue()+" "+re.getKey());
+
+    }
+    //version mas eficiente que el codigo anterior
+    private void getGender2(String[] genders) {
+        Gender genderCounts = Arrays.stream(genders)
+                .flatMap(gender -> Arrays.stream(Gender.values())
+                        .filter(genAux -> gender.contains(Gender.getValue(genAux))))
+                        .collect(Collectors.collectingAndThen(Collectors.groupingBy(Function.identity(),Collectors.counting()),
+                                mapGender->mapGender.entrySet().stream()
+                                        .max(Map.Entry.comparingByValue(Comparator.naturalOrder()))
+                                        .map(Map.Entry::getKey)
+                                        .orElse(Gender.UNKNOWN)
+                        ));
+        //System.out.println(genderCounts.getKey()+" "+genderCounts.getValue());
+
+
+    }
+
 
 }

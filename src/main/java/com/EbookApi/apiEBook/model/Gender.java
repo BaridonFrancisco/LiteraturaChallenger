@@ -1,7 +1,7 @@
 package com.EbookApi.apiEBook.model;
 
 public enum Gender {
-    FICITION("Ficcion"),
+    FICITION("Fiction"),
     CHILDREN("children"),
     Lovestories("Love stories"),
     UNKNOWN("unknown");
@@ -19,4 +19,9 @@ public enum Gender {
         }
         return UNKNOWN;
     }
+
+    public static String getValue(Gender gender){
+        return gender.value;
+    }
+
 }

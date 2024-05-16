@@ -20,7 +20,7 @@ public record DateBook(
         @JsonAlias("copyright")
         Boolean copyright,
         @JsonAlias("subjects")
-        String[]genero
+        String[] gender
 
 ) {
 
