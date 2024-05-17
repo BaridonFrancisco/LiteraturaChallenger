@@ -5,6 +5,7 @@ public record BookDto(
         Long countdownload,
         String language,
         Boolean copyright,
-        String genero
+        String genero,
+        AuthorDTO author
 ) {
 }

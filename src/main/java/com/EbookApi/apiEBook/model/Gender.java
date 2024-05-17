@@ -2,8 +2,9 @@ package com.EbookApi.apiEBook.model;
 
 public enum Gender {
     FICITION("Fiction"),
-    CHILDREN("children"),
+    CHILDREN("Children's stories"),
     Lovestories("Love stories"),
+    FICTIONFANTASY("Fantasy fiction"),
     UNKNOWN("unknown");
 
     private String value;

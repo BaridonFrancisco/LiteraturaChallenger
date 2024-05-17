@@ -5,8 +5,8 @@ import java.time.LocalDate;
 public record AuthorDTO(
 
         String fullName,
-        LocalDate birthDate,
-        LocalDate deathDeath
+        Integer birthDate,
+        Integer deathDeath
 
 
 ) {

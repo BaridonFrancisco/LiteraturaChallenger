@@ -15,7 +15,10 @@ public class Author {
     @OneToMany(mappedBy = "author",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     List<Book> listaBook;
 
-    public Author( String fullName, Integer birthDate, Integer deathDate, List<Book> listaBook) {
+    public Author() {
+    }
+
+    public Author(String fullName, Integer birthDate, Integer deathDate, List<Book> listaBook) {
         this.fullName = fullName;
         this.birthDate = birthDate;
         this.deathDate = deathDate;
@@ -60,6 +63,10 @@ public class Author {
 
     public void setListaBook(List<Book> listaBook) {
         this.listaBook = listaBook;
+    }
+
+    public void addBook(Book book){
+        this.listaBook.add(book);
     }
 
     @Override

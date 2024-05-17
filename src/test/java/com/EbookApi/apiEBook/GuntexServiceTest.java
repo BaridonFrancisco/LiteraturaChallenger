@@ -5,6 +5,7 @@ import com.EbookApi.apiEBook.service.TransformData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -22,18 +23,19 @@ public class GuntexServiceTest {
     @DisplayName("test authors")
     public void getListAuthorsTest() throws IOException, URISyntaxException {
         try {
+            String urlId = urlBase + "ids=11";
             String title = "Great Expectations";
             String url = urlBase + "search=" + title.replace(" ", "%20");
             var result = transformData.deserializarEntity(new URL(url), DateResult.class);
             var resultado = result.results().stream()
                     .collect(Collectors.toMap(a -> getAuthor(a.listaAutores())
                             , this::getBook));
-            var ere=resultado.entrySet().stream()
+            var ere = resultado.entrySet().stream()
                     .max(Map.Entry.comparingByValue(Comparator.comparing(Book::getCountDownload)))
-                    .map(entry->{
-                        Author author=entry.getKey();
-                        Book book=entry.getValue();
-                        List<Book>listBook=new ArrayList<>();
+                    .map(entry -> {
+                        Author author = entry.getKey();
+                        Book book = entry.getValue();
+                        List<Book> listBook = new ArrayList<>();
                         listBook.add(book);
                         author.setListaBook(listBook);
                         book.setAuthor(author);
@@ -41,7 +43,7 @@ public class GuntexServiceTest {
                     }).get();
             System.out.println(ere.getValue().getAuthor());
 
-           // System.out.println(resultado);
+            // System.out.println(resultado);
            /*     .distinct()
                 .sorted(Comparator.comparing(DateBook::downloadCount))
                .collect(Collectors.groupingBy(DateBook::listaAutores, Collectors.mapping(this::getBook, Collectors.toSet())));
@@ -58,12 +60,12 @@ public class GuntexServiceTest {
     }
 
     public Book getBook(DateBook dateBook) {
-        getGender2(dateBook.gender());
+
        /* Author author=dateBook.listaAutores().stream()
                 .findFirst()
                 .map(a->new Author(null,LocalDate.parse(a.birthDate()),LocalDate.parse(a.deathYear()),new ArrayList<>())).get();*/
         return new Book(null, dateBook.copyright()
-                , null,
+                , getGender(dateBook.gender()),
                 Arrays.toString(dateBook.languages()),
                 dateBook.downloadCount(), dateBook.title());
     }
@@ -77,37 +79,51 @@ public class GuntexServiceTest {
                         null))
                 .get();
     }
-    private void getGender(String[] genders){
-       var re= Arrays.stream(Arrays.stream(genders)
-                .map(gender->{
-                    StringBuilder result= new StringBuilder();
-                    for(Gender genAux:Gender.values()){
-                        if(gender.contains(Gender.getValue(genAux))){
-                            result.append(Gender.getValue(genAux));
-                        }
-                    }
-                    return result;
-                })
-               .collect(Collectors.joining(","))
-               .split(","))
-               .collect(Collectors.collectingAndThen(Collectors.groupingBy(Function.identity(),Collectors.counting()),
-                       map->map.entrySet().stream()
-                               .max(Map.Entry.comparingByValue(Comparator.naturalOrder())).get()));
-        System.out.println(re.getValue()+" "+re.getKey());
+
+    //menos eficiente
+    private void getGender2(String[] genders) {
+        var re = Arrays.stream(Arrays.stream(genders)
+                        .map(gender -> {
+                            StringBuilder result = new StringBuilder();
+                            for (Gender genAux : Gender.values()) {
+                                if (gender.contains(Gender.getValue(genAux))) {
+                                    result.append(Gender.getValue(genAux));
+                                }
+                            }
+                            return result;
+                        })
+                        .collect(Collectors.joining(","))
+                        .split(","))
+                .collect(Collectors.collectingAndThen(Collectors.groupingBy(Function.identity(), Collectors.counting()),
+                        map -> map.entrySet().stream()
+                                .max(Map.Entry.comparingByValue(Comparator.naturalOrder())).get()));
+        System.out.println(re.getValue() + " " + re.getKey());
 
     }
+
     //version mas eficiente que el codigo anterior
-    private void getGender2(String[] genders) {
+    private void getGender3(String[] genders) {
         Gender genderCounts = Arrays.stream(genders)
                 .flatMap(gender -> Arrays.stream(Gender.values())
                         .filter(genAux -> gender.contains(Gender.getValue(genAux))))
-                        .collect(Collectors.collectingAndThen(Collectors.groupingBy(Function.identity(),Collectors.counting()),
-                                mapGender->mapGender.entrySet().stream()
-                                        .max(Map.Entry.comparingByValue(Comparator.naturalOrder()))
-                                        .map(Map.Entry::getKey)
-                                        .orElse(Gender.UNKNOWN)
-                        ));
-        //System.out.println(genderCounts.getKey()+" "+genderCounts.getValue());
+                .collect(Collectors.collectingAndThen(Collectors.groupingBy(Function.identity(), Collectors.counting()),
+                        mapGender -> mapGender.entrySet().stream()
+                                .max(Map.Entry.comparingByValue(Comparator.naturalOrder()))
+                                .map(Map.Entry::getKey)
+                                .orElse(Gender.UNKNOWN)
+                ));
+        System.out.println(Gender.getValue(genderCounts));
+
+    }
+
+    public Gender getGender(String[] genders) {
+        var genderBook = Arrays.stream(genders)
+                .flatMap(gender -> Arrays.stream(Gender.values())
+                        .filter(genAux -> gender.contains(Gender.getValue(genAux))))
+                .distinct()
+                .toList();
+        int ramdomIndex=new Random().nextInt(0,genderBook.size());
+        return genderBook.get(ramdomIndex);
 
 
     }

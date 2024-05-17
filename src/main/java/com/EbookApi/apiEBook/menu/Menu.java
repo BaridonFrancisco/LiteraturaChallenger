@@ -1,18 +1,25 @@
 package com.EbookApi.apiEBook.menu;
 
 import com.EbookApi.apiEBook.service.AuthorService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
+@Component
 public class Menu {
     Scanner scanner=new Scanner(System.in);
 
+    @Autowired
     AuthorService authorService;
 
+    public Menu(AuthorService authorService) {
+        this.authorService = authorService;
+    }
 
-
-    public void startAPIMenu(){
+    public void startAPIMenu() throws IOException, URISyntaxException {
         int op=0;
         System.out.println("Bienvenidos al menu de API ebook");
         do{
@@ -28,6 +35,8 @@ public class Menu {
                         7.Buscar libros por idiomas""");
                switch ( op = scanner.nextInt()){
                    case 1:
+                       var s=authorService.findByTitle("Symbolic Logic");
+                       System.out.println(s);
                        break;
                    case 2:
                        break;

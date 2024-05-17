@@ -20,10 +20,10 @@ public class Book {
     public Book() {
     }
 
-    public Book(Author author, Boolean copyright, String gender, String language, Long countDownload, String title) {
+    public Book(Author author, Boolean copyright, Gender gender, String language, Long countDownload, String title) {
         this.author = author;
         this.copyright = copyright;
-        this.gender = Gender.getGender(gender);
+        this.gender = gender;
         this.language = language;
         this.countDownload = countDownload;
         this.title = title;
