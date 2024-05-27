@@ -11,10 +11,6 @@ import java.util.Scanner;
 @Component
 public class Menu {
     Scanner scanner=new Scanner(System.in);
-    private final String[] colours=new String[]{
-            //reset,amarillo,violata fondo negro
-            "\u001B[0m","\u001B[33m","\u001B[44m"
-    };
     @Autowired
     AuthorService authorService;
 
@@ -45,8 +41,8 @@ public class Menu {
                    case 2:
                        break;
                    case 3:
-                       System.out.println(colours[2]+"NOTA los autores se registran buscando " +
-                               "un libro si no existe el autor lo buscara de otra fuenta "+colours[0]);
+                       System.out.println("NOTA los autores se registran buscando " +
+                               "un libro si no existe el autor lo buscara de otra fuenta ");
                        break;
                    case 4:
                        break;
