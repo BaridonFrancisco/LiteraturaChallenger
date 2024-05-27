@@ -11,7 +11,10 @@ import java.util.Scanner;
 @Component
 public class Menu {
     Scanner scanner=new Scanner(System.in);
-
+    private final String[] colours=new String[]{
+            //reset,amarillo,violata fondo negro
+            "\u001B[0m","\u001B[33m","\u001B[44m"
+    };
     @Autowired
     AuthorService authorService;
 
@@ -28,19 +31,22 @@ public class Menu {
                         *****Menu*****
                         1.Listar todos libros disponibles
                         2.Buscar libro por titulo
-                        3.Listar autores disponibles
+                        3.Listar autores registrados
                         4.Buscar libro por topico
                         5.Listar top 5 libros
                         6.Listar por anio
-                        7.Buscar libros por idiomas""");
+                        7.Buscar libros por idiomas
+                        0.Salir""");
                switch ( op = scanner.nextInt()){
                    case 1:
                        var s=authorService.findByTitle("Symbolic Logic");
-                       System.out.println(s);
+                       System.out.println("libroDto resultado->"+s);
                        break;
                    case 2:
                        break;
                    case 3:
+                       System.out.println(colours[2]+"NOTA los autores se registran buscando " +
+                               "un libro si no existe el autor lo buscara de otra fuenta "+colours[0]);
                        break;
                    case 4:
                        break;
@@ -56,9 +62,9 @@ public class Menu {
                }
 
             }catch (InputMismatchException e){
-
+                System.out.println("no ha ingresado una opcion valida intentelo nuevamente");
             }
-        }while(op!=-1);
-
+        }while(op!=0);
+        scanner.close();
     }
 }

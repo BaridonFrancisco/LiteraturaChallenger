@@ -6,14 +6,14 @@ import com.EbookApi.apiEBook.model.Author;
 import com.EbookApi.apiEBook.model.Book;
 import com.EbookApi.apiEBook.model.Gender;
 import com.EbookApi.apiEBook.repository.AuthorRepository;
-import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class AuthorService {
@@ -40,18 +40,32 @@ public class AuthorService {
                     new AuthorDTO(authorAux.getFullName(), authorAux.getBirthDate(), authorAux.getDeathDate()));
 
         } else {
-            //Author gutendex
+
+            // autor de la base guntex
             Author newAuthor = gutendexService.findBookByTitleGutendex(title);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            // autor de la base de datos
             Author authorDb = authorExist(newAuthor.getFullName());
 
-
+            System.out.println(authorDb);
+            System.out.println("Separacion--------");
+            System.out.println(newAuthor);
+            System.out.println("---");
             if (authorDb != null) {
-                authorDb.addBook(newAuthor.getListaBook().get(0));
+                newAuthor.setId(authorDb.getId());
+                List<Book> bookRef = new ArrayList<>(authorDb.getListaBook());
+                bookRef.add(newAuthor.getListaBook().get(0));
+                authorDb.getListaBook().addAll(newAuthor.getListaBook());
                 authorRepository.save(authorDb);
 
             } else {
                 authorRepository.save(newAuthor);
             }
+            System.out.println("fin");
             var bookDto1 = newAuthor.getListaBook().get(0);
             return new BookDto(bookDto1.getTitle(), bookDto1.getCountDownload(), bookDto1.getLanguage(), bookDto1.getCopyright(), Gender.getValue(bookDto1.getGender()),
                     new AuthorDTO(newAuthor.getFullName(), newAuthor.getBirthDate(), newAuthor.getDeathDate()));
@@ -72,7 +86,7 @@ public class AuthorService {
     }
 
     public Author authorExist(String fullName) {
-        var author = authorRepository.findByFullName(fullName);
+        Optional<Author> author = authorRepository.findByFullName(fullName);
         return author.orElse(null);
 
     }
