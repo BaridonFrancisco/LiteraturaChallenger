@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ApiEBookApplication implements CommandLineRunner {
 
-	/*@Autowired
-	AuthorService authorService;*/
+	@Autowired
+	AuthorService authorService;
 
 	public static void main(String[] args) {
 
@@ -21,7 +21,7 @@ public class ApiEBookApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		/*Menu menu=new Menu(authorService);
-		menu.startAPIMenu();*/
+		Menu menu=new Menu(authorService);
+		menu.startAPIMenu();
 	}
 }

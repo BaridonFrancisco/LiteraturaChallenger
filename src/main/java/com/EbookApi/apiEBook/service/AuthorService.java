@@ -2,6 +2,7 @@ package com.EbookApi.apiEBook.service;
 
 import com.EbookApi.apiEBook.dto.AuthorDTO;
 import com.EbookApi.apiEBook.dto.BookDto;
+import com.EbookApi.apiEBook.menu.ColoursConsole;
 import com.EbookApi.apiEBook.model.Author;
 import com.EbookApi.apiEBook.model.Book;
 import com.EbookApi.apiEBook.model.Gender;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthorService {
@@ -44,6 +46,7 @@ public class AuthorService {
             // autor de la base guntex
             Author newAuthor = gutendexService.findBookByTitleGutendex(title);
             try {
+                System.out.println(ColoursConsole.paintFontBackground("BGPURPLE","WHITE","Buscando de otra fuente aguarde"));
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -75,20 +78,23 @@ public class AuthorService {
 
 
     }
-
-    private boolean checkIfExitsBook(Author author, String title) {
-        for (Book b : author.getListaBook()) {
-            if (b.getTitle().contains(title)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    
 
     public Author authorExist(String fullName) {
         Optional<Author> author = authorRepository.findByFullName(fullName);
         return author.orElse(null);
 
     }
+    public List<AuthorDTO>allAuthors(){
+        return authorRepository.findAll().stream()
+                .map(author ->new AuthorDTO(author.getFullName(),author.getBirthDate(),author.getDeathDate()))
+                .collect(Collectors.toList());
+    }
 
+    public List<BookDto> allBooks() {
+        return authorRepository.allBooks().stream()
+                .map(book->new BookDto(book.getTitle(),book.getCountDownload(),book.getLanguage(),book.getCopyright(),book.getGender().toString(),
+                        new AuthorDTO(book.getAuthor().getFullName(),book.getAuthor().getBirthDate(),book.getAuthor().getDeathDate())))
+                .collect(Collectors.toList());
+    }
 }

@@ -1,6 +1,5 @@
 package com.EbookApi.apiEBook.model;
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -65,9 +64,7 @@ public class Author {
         this.listaBook = listaBook;
     }
 
-    public void addBook(Book book){
-        this.listaBook.add(book);
-    }
+
 
     @Override
     public String toString() {

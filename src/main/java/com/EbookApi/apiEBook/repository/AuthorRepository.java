@@ -15,8 +15,10 @@ public interface AuthorRepository extends JpaRepository<Author,Long> {
 
     Optional<Author>findByFullName(String name);
 
-   /* @Query("SELECT b FROM ")
-    List<Book>allBooks();*/
+    @Query("SELECT b FROM Book b")
+    List<Book>allBooks();
+
+    
 
 
 
