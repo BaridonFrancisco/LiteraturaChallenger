@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,6 +46,10 @@ public class AuthorService {
 
             // autor de la base guntex
             Author newAuthor = gutendexService.findBookByTitleGutendex(title);
+            if(newAuthor==null){
+                System.out.println(ColoursConsole.paintFontBackground("BGYELLOW","RED","No se ha encontrado el libro solicitado"));
+                return null;
+            }
             try {
                 System.out.println(ColoursConsole.paintFontBackground("BGPURPLE","WHITE","Buscando de otra fuente aguarde"));
                 Thread.sleep(3000);
@@ -92,7 +97,15 @@ public class AuthorService {
     }
 
     public List<BookDto> allBooks() {
-        return authorRepository.allBooks().stream()
+        return mapBookToBookDTO(authorRepository.allBooks());
+    }
+
+    public List<BookDto> top5Books() {
+        return mapBookToBookDTO(authorRepository.top5Books());
+    }
+
+    private List<BookDto> mapBookToBookDTO(List<Book>listBooks){
+        return listBooks.stream()
                 .map(book->new BookDto(book.getTitle(),book.getCountDownload(),book.getLanguage(),book.getCopyright(),book.getGender().toString(),
                         new AuthorDTO(book.getAuthor().getFullName(),book.getAuthor().getBirthDate(),book.getAuthor().getDeathDate())))
                 .collect(Collectors.toList());

@@ -18,7 +18,8 @@ public interface AuthorRepository extends JpaRepository<Author,Long> {
     @Query("SELECT b FROM Book b")
     List<Book>allBooks();
 
-    
+    @Query("SELECT b FROM Book b ORDER BY b.countDownload DESC LIMIT 5 ")
+    List<Book>top5Books();
 
 
 

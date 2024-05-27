@@ -42,9 +42,12 @@ public class Menu {
                        allBooks.forEach(System.out::println);
                        break;
                    case 2:
-                       var s=authorService.findByTitle("Symbolic Logic");
+                       scanner.nextLine();
+                       System.out.println("Ingrese el nombre del titulo del libro ");
+                       String title=scanner.nextLine();
+                       var s=authorService.findByTitle(title);
                        System.out.println("libroDto resultado->"+s);
-                       System.out.println(ColoursConsole.paintFontBackground("BGGREEN","RED","Archivo guardado con exito"));
+                       //System.out.println(ColoursConsole.paintFontBackground("BGGREEN","RED","Archivo guardado con exito"));
                        break;
                    case 3:
                        System.out.println(ColoursConsole.paintFont("yellow","NOTA los autores se registran buscando libro no existentes"));
@@ -54,6 +57,12 @@ public class Menu {
                    case 4:
                        break;
                    case 5:
+                       var top5Books=authorService.top5Books();
+                       if(top5Books.isEmpty()){
+                           System.out.println(ColoursConsole.paintFont("yellow","no se encontraron libros"));
+                           break;
+                       }
+                       top5Books.forEach(System.out::println);
                        break;
                    case 6:
                        break;
