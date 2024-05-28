@@ -20,6 +20,16 @@ public enum Gender {
         }
         return UNKNOWN;
     }
+    public static Gender getGender(int ordinalValue){
+        Gender[] values=Gender.values();
+        ordinalValue--;
+        for (Gender gender:values){
+            if(gender.ordinal()==ordinalValue){
+                return gender;
+            }
+        }
+       return values[values.length-1];
+    }
 
     public static String getValue(Gender gender){
         return gender.value;

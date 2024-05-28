@@ -12,10 +12,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,6 +101,9 @@ public class AuthorService {
     public List<BookDto> top5Books() {
         return mapBookToBookDTO(authorRepository.top5Books());
     }
+    public List<BookDto>listByTopic(Gender gender){
+        return mapBookToBookDTO(authorRepository.listByTopic(gender));
+    }
 
     private List<BookDto> mapBookToBookDTO(List<Book>listBooks){
         return listBooks.stream()
@@ -110,4 +111,5 @@ public class AuthorService {
                         new AuthorDTO(book.getAuthor().getFullName(),book.getAuthor().getBirthDate(),book.getAuthor().getDeathDate())))
                 .collect(Collectors.toList());
     }
+
 }

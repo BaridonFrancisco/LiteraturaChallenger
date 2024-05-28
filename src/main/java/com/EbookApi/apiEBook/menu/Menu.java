@@ -1,5 +1,6 @@
 package com.EbookApi.apiEBook.menu;
 
+import com.EbookApi.apiEBook.model.Gender;
 import com.EbookApi.apiEBook.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,6 +56,26 @@ public class Menu {
                        System.out.println(allAuthors);
                        break;
                    case 4:
+                       scanner.nextLine();
+                       int ops=0;
+                       System.out.println("Ingrese por que genero desea buscar el genero que desea buscar");
+                       System.out.println("""
+                               1.Ficcion
+                               2.Historias de ninios
+                               3.Historias de amor
+                               4.Fantasia Ficcion
+                               5.Desconocido""");
+                       ops=scanner.nextInt();
+                       if(ops>0 && ops<6){
+                           var booksByGender=authorService.listByTopic(Gender.getGender(ops));
+                           if(!booksByGender.isEmpty()){
+                               booksByGender.forEach(System.out::println);
+                           }
+                       }else{
+                           System.out.println(ColoursConsole.paintFont(ColoursConsole.YELLOW,"No ha ingresado un genero valido intentelo nuevamente"));
+
+                       }
+                       Thread.sleep(3000);
                        break;
                    case 5:
                        var top5Books=authorService.top5Books();

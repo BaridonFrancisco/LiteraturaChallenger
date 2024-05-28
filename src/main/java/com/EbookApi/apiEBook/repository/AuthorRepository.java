@@ -1,6 +1,7 @@
 package com.EbookApi.apiEBook.repository;
 import com.EbookApi.apiEBook.model.Author;
 import com.EbookApi.apiEBook.model.Book;
+import com.EbookApi.apiEBook.model.Gender;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +21,9 @@ public interface AuthorRepository extends JpaRepository<Author,Long> {
 
     @Query("SELECT b FROM Book b ORDER BY b.countDownload DESC LIMIT 5 ")
     List<Book>top5Books();
+
+    @Query("SELECT b FROM Book b WHERE b.gender =:topic")
+    List<Book>listByTopic(@Param("topic") Gender topic);
 
 
 
