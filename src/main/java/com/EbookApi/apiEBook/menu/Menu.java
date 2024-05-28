@@ -86,6 +86,16 @@ public class Menu {
                        top5Books.forEach(System.out::println);
                        break;
                    case 6:
+                       scanner.nextLine();
+                       int year=0;
+                       System.out.println("Ingrese el anio que desea buscar");
+                       year=scanner.nextInt();
+                       if(year<=0){
+                           System.out.println("no ha ingresado un valor valido");
+                           break;
+                       }
+                       var authorsByYear=authorService.listAuthorByYear(year);
+                       authorsByYear.forEach(System.out::println);
                        break;
                    case 7:
                        scanner.nextLine();
@@ -110,7 +120,6 @@ public class Menu {
     }
 
     private void subMenuLanguages(){
-        int optionLan=0;
         String codeLan="";
         System.out.println("""
                 Selecciones el idioma del libro que desea buscar

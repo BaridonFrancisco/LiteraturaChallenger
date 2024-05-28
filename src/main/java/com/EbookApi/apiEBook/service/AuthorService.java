@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 public class AuthorService {
     @Autowired
     AuthorRepository authorRepository;
-    TransformData transformData = new TransformData();
-    final String urlBase = "https://gutendex.com/books?";
     GutendexService gutendexService = new GutendexService();
 
     public BookDto findByTitle(String title) throws IOException, URISyntaxException {
@@ -92,6 +90,14 @@ public class AuthorService {
         return authorRepository.findAll().stream()
                 .map(author ->new AuthorDTO(author.getFullName(),author.getBirthDate(),author.getDeathDate()))
                 .collect(Collectors.toList());
+    }
+
+    public List<AuthorDTO>listAuthorByYear(int year){
+       return allAuthors().stream()
+                .filter(author->author.deathDeath()>=year && author.birthDate()<=year)
+                .map(author ->new AuthorDTO(author.fullName(),author.birthDate(),author.deathDeath()))
+                .collect(Collectors.toList());
+
     }
 
     public List<BookDto> allBooks() {

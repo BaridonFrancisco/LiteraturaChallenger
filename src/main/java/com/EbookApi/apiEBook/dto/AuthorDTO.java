@@ -10,4 +10,11 @@ public record AuthorDTO(
 
 
 ) {
+    @Override
+    public String toString() {
+        return "----\nAuthor\n" +
+                "Nombre completo: " + fullName + "\n"+
+                "Año de nacimiento: " + birthDate + "\n"+
+                "Año de fallecimiento: " + deathDeath +"\n";
+    }
 }
