@@ -104,6 +104,9 @@ public class AuthorService {
     public List<BookDto>listByTopic(Gender gender){
         return mapBookToBookDTO(authorRepository.listByTopic(gender));
     }
+    public List<BookDto>listByLanguage(String lan){
+        return mapBookToBookDTO(authorRepository.listbyLanguage(lan));
+    }
 
     private List<BookDto> mapBookToBookDTO(List<Book>listBooks){
         return listBooks.stream()

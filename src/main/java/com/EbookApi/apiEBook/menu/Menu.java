@@ -88,6 +88,8 @@ public class Menu {
                    case 6:
                        break;
                    case 7:
+                       scanner.nextLine();
+                       subMenuLanguages();
                        break;
                    case 0:
                        System.out.println("Saliendo...");
@@ -105,5 +107,29 @@ public class Menu {
             }
         }while(op!=0);
         scanner.close();
+    }
+
+    private void subMenuLanguages(){
+        int optionLan=0;
+        String codeLan="";
+        System.out.println("""
+                Selecciones el idioma del libro que desea buscar
+                1.English
+                2.Español
+                3.Français
+                4.Deutsch""");
+        switch (scanner.nextInt()){
+            case 1->codeLan="en";
+            case 2->codeLan="es";
+            case 3->codeLan="fr";
+            case 4->codeLan="de";
+            default -> System.out.println("opcion incorrecta intentelo nuevamente");
+        }
+        if(!codeLan.isEmpty()){
+            var listByLang=authorService.listByLanguage(codeLan);
+            listByLang.forEach(System.out::println);
+
+        }
+
     }
 }
