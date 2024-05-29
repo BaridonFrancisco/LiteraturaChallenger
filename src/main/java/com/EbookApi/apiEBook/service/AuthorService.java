@@ -1,5 +1,4 @@
 package com.EbookApi.apiEBook.service;
-
 import com.EbookApi.apiEBook.dto.AuthorDTO;
 import com.EbookApi.apiEBook.dto.BookDto;
 import com.EbookApi.apiEBook.menu.ColoursConsole;
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LongSummaryStatistics;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -69,6 +69,7 @@ public class AuthorService {
             } else {
                 authorRepository.save(newAuthor);
             }
+
             System.out.println("fin");
             var bookDto1 = newAuthor.getListaBook().get(0);
             return new BookDto(bookDto1.getTitle(), bookDto1.getCountDownload(), bookDto1.getLanguage(), bookDto1.getCopyright(), Gender.getValue(bookDto1.getGender()),
@@ -112,6 +113,19 @@ public class AuthorService {
     }
     public List<BookDto>listByLanguage(String lan){
         return mapBookToBookDTO(authorRepository.listbyLanguage(lan));
+    }
+
+    public String booksStadistics(){
+       LongSummaryStatistics sta= allBooks().stream()
+                .mapToLong(BookDto::countdownload)
+                .summaryStatistics();
+        return String.format("""
+                Media de descargas: %.2f\s
+                Maximo de descargas: %d\s
+                Minimo de descargas: %d\s
+                Registros totales: %d\s
+                """,sta.getAverage(),sta.getMax(),sta.getMin(),sta.getCount());
+
     }
 
     private List<BookDto> mapBookToBookDTO(List<Book>listBooks){
