@@ -28,6 +28,8 @@ public interface AuthorRepository extends JpaRepository<Author,Long> {
     @Query("SELECT b FROM Book b WHERE b.language ILIKE %:lan%")
     List<Book>listbyLanguage(@Param("lan")String lan);
 
+    @Query("SELECT b FROM Book b JOIN b.author a WHERE b.title LIKE :bookTitle")
+    Optional<Book> findByBook2(@Param("bookTitle") String bookTitle);
 
 
 }

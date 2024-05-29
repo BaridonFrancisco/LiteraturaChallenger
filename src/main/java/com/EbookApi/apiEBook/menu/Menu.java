@@ -4,7 +4,6 @@ import com.EbookApi.apiEBook.model.Gender;
 import com.EbookApi.apiEBook.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.InputMismatchException;
@@ -23,6 +22,10 @@ public class Menu {
     public void startAPIMenu() throws IOException, URISyntaxException {
         int op = -1;
         System.out.println("Bienvenidos al menu de API ebook");
+
+
+
+
         do {
             try {
                 System.out.println("""
@@ -35,6 +38,7 @@ public class Menu {
                         6.Listar autor por anio
                         7.Buscar libros por idiomas
                         8.Estadisticas de los libros
+                        9.Buscar autor por nombre
                         0.Salir""");
                 switch (op = scanner.nextInt()) {
                     case 0:
@@ -109,10 +113,25 @@ public class Menu {
                         subMenuLanguages();
                         break;
                     case 8:
-                        var stadistic=authorService.booksStadistics();
+                        String stadistic=authorService.booksStadistics();
                         System.out.println(stadistic);
                         break;
+
                     case 9:
+                        scanner.nextLine();
+                        String authorName;
+                        System.out.println("Ingrese el nombre del autor");
+                        authorName=scanner.nextLine();
+                        var author=authorService.searchAuthorByName(authorName);
+                        if(author!=null){
+                            System.out.println(author);
+                        }else{
+                            System.out.println(ColoursConsole.paintFont("YELLOW","Lo sentimos,autor no encontrado"));
+                        }
+                        break;
+                    case 10:
+                        var resultado=authorService.getTitle("symbolic");
+                        System.out.println(resultado);
                         break;
                     default:
                         System.out.println("No ha seleccionado una opcion correcta");
@@ -125,6 +144,7 @@ public class Menu {
             } catch (InterruptedException e) {
                 System.out.println("ups");
             } catch (Exception e) {
+                System.out.println(e.getMessage());
                 System.out.println("err");
             } finally {
                 scanner.nextLine();

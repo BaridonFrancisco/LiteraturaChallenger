@@ -1,4 +1,5 @@
 package com.EbookApi.apiEBook.service;
+
 import com.EbookApi.apiEBook.dto.AuthorDTO;
 import com.EbookApi.apiEBook.dto.BookDto;
 import com.EbookApi.apiEBook.menu.ColoursConsole;
@@ -10,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.LongSummaryStatistics;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,56 +20,58 @@ public class AuthorService {
     AuthorRepository authorRepository;
     GutendexService gutendexService = new GutendexService();
 
+    //buscar un libro por titulo en la base de datos sino lo encuentra lo busca en gutendex
     public BookDto findByTitle(String title) throws IOException, URISyntaxException {
-        var book = authorRepository.findByBook(title);
-        if (book.isPresent()) {
-            var authorAux = book.get();
-            System.out.println(book.get().getListaBook().size());
-            var bookAux = book.get().getListaBook().stream()
+       Optional<Author> authorByTitle = authorRepository.findByBook(title);
+        if (authorByTitle.isPresent()) {
+
+            var authorAux = authorByTitle.get();
+            System.out.println(authorByTitle.get().getListaBook().size());
+            var bookAux = authorByTitle.get().getListaBook().stream()
                     .filter(books -> books.getTitle().equalsIgnoreCase(title))
                     .findFirst()
                     .orElse(null);
             assert bookAux != null;
-            return new BookDto(bookAux.getTitle(),
-                    bookAux.getCountDownload(),
-                    bookAux.getLanguage(), bookAux.getCopyright(),
-                    Gender.getValue(bookAux.getGender()),
-                    new AuthorDTO(authorAux.getFullName(), authorAux.getBirthDate(), authorAux.getDeathDate()));
+            return mapToBookDto(bookAux);
 
         } else {
-
-            // autor de la base guntex
-            Author newAuthor = gutendexService.findBookByTitleGutendex(title);
-            if(newAuthor==null){
-                System.out.println(ColoursConsole.paintFontBackground("BGYELLOW","RED","No se ha encontrado el libro solicitado"));
+            // autor de la base guntendex
+            Author newAuthor = gutendexService.findAuthorByTitle(title);
+            if (newAuthor == null) {
+                System.out.println(ColoursConsole.paintFontBackground("BGYELLOW", "RED", "No se ha encontrado el libro solicitado"));
                 return null;
             }
             try {
-                System.out.println(ColoursConsole.paintFontBackground("BGPURPLE","WHITE","Buscando de otra fuente aguarde"));
+                System.out.println(ColoursConsole.paintFontBackground("BGPURPLE", "WHITE", "Buscando de otra fuente aguarde por favor ..."));
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
             // autor de la base de datos
             Author authorDb = authorExist(newAuthor.getFullName());
 
-            System.out.println(authorDb);
+            /*System.out.println(authorDb);
             System.out.println("Separacion--------");
             System.out.println(newAuthor);
-            System.out.println("---");
+            System.out.println("---");*/
             if (authorDb != null) {
-                newAuthor.setId(authorDb.getId());
-                List<Book> bookRef = new ArrayList<>(authorDb.getListaBook());
-                bookRef.add(newAuthor.getListaBook().get(0));
-                authorDb.getListaBook().addAll(newAuthor.getListaBook());
-                authorRepository.save(authorDb);
+                var res = authorDb.getListaBook().stream()
+                        .anyMatch(books -> books.getTitle().equalsIgnoreCase(newAuthor.getListaBook().get(0).getTitle()));
 
+                if (!res) {
+                    newAuthor.setId(authorDb.getId());
+                    authorDb.getListaBook().addAll(newAuthor.getListaBook());
+                    authorRepository.save(authorDb);
+                }
+                System.out.println("entrada1");
             } else {
+                System.out.println("entranda2");
                 authorRepository.save(newAuthor);
             }
 
             System.out.println("fin");
-            var bookDto1 = newAuthor.getListaBook().get(0);
+            Book bookDto1 = newAuthor.getListaBook().get(0);
             return new BookDto(bookDto1.getTitle(), bookDto1.getCountDownload(), bookDto1.getLanguage(), bookDto1.getCopyright(), Gender.getValue(bookDto1.getGender()),
                     new AuthorDTO(newAuthor.getFullName(), newAuthor.getBirthDate(), newAuthor.getDeathDate()));
 
@@ -80,43 +80,73 @@ public class AuthorService {
 
 
     }
-    
 
-    public Author authorExist(String fullName) {
+    public AuthorDTO searchAuthorByName(String nameAuthor) throws IOException, URISyntaxException {
+        Optional<Author> authorDb=authorRepository.findByFullName(nameAuthor);
+        AuthorDTO author=null;
+        if(authorDb.isPresent()){
+            author=authorDb.map(a->new AuthorDTO(a.getFullName(),a.getBirthDate(),a.getDeathDate()))
+                    .orElse(null);
+        }else{
+            //buscar gutendex
+            Author newAuthor=gutendexService.searchAuthorGutendex(nameAuthor);
+            if(newAuthor!=null){
+                authorRepository.save(newAuthor);
+                return new AuthorDTO(newAuthor.getFullName(), newAuthor.getBirthDate(), newAuthor.getDeathDate());
+            }
+            System.out.println("Autor no encontrado");
+        }
+
+        return author;
+    }
+
+
+    //verifica si un autor existe en la base de datos
+    private Author authorExist(String fullName) {
         Optional<Author> author = authorRepository.findByFullName(fullName);
         return author.orElse(null);
 
     }
-    public List<AuthorDTO>allAuthors(){
+
+    //obtiene todos los autoresdto
+    public List<AuthorDTO> allAuthors() {
         return authorRepository.findAll().stream()
-                .map(author ->new AuthorDTO(author.getFullName(),author.getBirthDate(),author.getDeathDate()))
+                .map(author -> new AuthorDTO(author.getFullName(), author.getBirthDate(), author.getDeathDate()))
                 .collect(Collectors.toList());
     }
 
-    public List<AuthorDTO>listAuthorByYear(int year){
-       return allAuthors().stream()
-                .filter(author->author.deathDeath()>=year && author.birthDate()<=year)
-                .map(author ->new AuthorDTO(author.fullName(),author.birthDate(),author.deathDeath()))
+    //obtiene una lista de autoresdto vivos en x anio
+    public List<AuthorDTO> listAuthorByYear(int year) {
+        return allAuthors().stream()
+                .filter(author -> author.deathDeath() >= year && author.birthDate() <= year)
+                .map(author -> new AuthorDTO(author.fullName(), author.birthDate(), author.deathDeath()))
                 .collect(Collectors.toList());
 
     }
 
+    //obtiene todos los librosdto
     public List<BookDto> allBooks() {
-        return mapBookToBookDTO(authorRepository.allBooks());
+        return ListBookToListBookDto(authorRepository.allBooks());
     }
 
+    //obtiene una lista de librosdto mas descargados
     public List<BookDto> top5Books() {
-        return mapBookToBookDTO(authorRepository.top5Books());
-    }
-    public List<BookDto>listByTopic(Gender gender){
-        return mapBookToBookDTO(authorRepository.listByTopic(gender));
-    }
-    public List<BookDto>listByLanguage(String lan){
-        return mapBookToBookDTO(authorRepository.listbyLanguage(lan));
+        return ListBookToListBookDto(authorRepository.top5Books());
     }
 
-    public String booksStadistics(){
-       LongSummaryStatistics sta= allBooks().stream()
+    //obtiene una lista de libros por genero
+    public List<BookDto> listByTopic(Gender gender) {
+        return ListBookToListBookDto(authorRepository.listByTopic(gender));
+    }
+
+    //obtiene la lista de libros por lenguaje
+    public List<BookDto> listByLanguage(String lan) {
+        return ListBookToListBookDto(authorRepository.listbyLanguage(lan));
+    }
+
+    //Muestra las estadisticas de todos los libros
+    public String booksStadistics() {
+        LongSummaryStatistics sta = allBooks().stream()
                 .mapToLong(BookDto::countdownload)
                 .summaryStatistics();
         return String.format("""
@@ -124,15 +154,29 @@ public class AuthorService {
                 Maximo de descargas: %d\s
                 Minimo de descargas: %d\s
                 Registros totales: %d\s
-                """,sta.getAverage(),sta.getMax(),sta.getMin(),sta.getCount());
+                """, sta.getAverage(), sta.getMax(), sta.getMin(), sta.getCount());
 
     }
 
-    private List<BookDto> mapBookToBookDTO(List<Book>listBooks){
+
+    public BookDto getTitle(String title){
+        return authorRepository.findByBook2(title)
+                .map(this::mapToBookDto)
+                .orElse(null);
+    }
+
+    //convierte una lista de libros a una lista de librosDto
+    private List<BookDto> ListBookToListBookDto(List<Book> listBooks) {
         return listBooks.stream()
-                .map(book->new BookDto(book.getTitle(),book.getCountDownload(),book.getLanguage(),book.getCopyright(),book.getGender().toString(),
-                        new AuthorDTO(book.getAuthor().getFullName(),book.getAuthor().getBirthDate(),book.getAuthor().getDeathDate())))
+                .map(this::mapToBookDto)
                 .collect(Collectors.toList());
+    }
+
+    private BookDto mapToBookDto(Book book) {
+        return new BookDto(book.getTitle(), book.getCountDownload(), book.getLanguage(),
+                book.getCopyright(), Gender.getValue(book.getGender()),
+                new AuthorDTO(book.getAuthor().getFullName(),
+                        book.getAuthor().getBirthDate(), book.getAuthor().getDeathDate()));
     }
 
 }

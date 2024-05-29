@@ -1,18 +1,21 @@
 package com.EbookApi.apiEBook.service;
+import com.EbookApi.apiEBook.dto.AuthorDTO;
 import com.EbookApi.apiEBook.model.*;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GutendexService {
+public class
+GutendexService {
 
     final String urlBase = "https://gutendex.com/books?";
     TransformData transformData = new TransformData();
 
-    public Author findBookByTitleGutendex(String title) throws IOException, URISyntaxException {
+    public Author findAuthorByTitle(String title) throws IOException, URISyntaxException {
         String url = urlBase + "search=" + title.replace(" ", "%20");
         DateResult result = transformData.deserializarEntity(new URL(url), DateResult.class);
         System.out.println(result.results());
@@ -32,6 +35,18 @@ public class GutendexService {
                 });
         return entryAuthor.map(Map.Entry::getKey)
                 .orElse(null);
+
+    }
+
+    public Author searchAuthorGutendex(String fullName) throws IOException, URISyntaxException {
+        String url = urlBase + "search=" + fullName.replace(" ", "%20");
+        DateResult result = transformData.deserializarEntity(new URL(url), DateResult.class);
+      return result.results().stream()
+                .flatMap(dataBook->dataBook.listaAutores().stream().parallel()
+                        .filter(dataAuthor->dataAuthor.name().equalsIgnoreCase(fullName))
+                        .map(dateAuthors ->new Author(dateAuthors.name(),Integer.parseInt(dateAuthors.birthDate()),Integer.parseInt(dateAuthors.deathYear()),new ArrayList<>())))
+               .findAny().orElse(null);
+
 
     }
 
