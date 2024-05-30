@@ -20,12 +20,8 @@ public class Menu {
     }
 
     public void startAPIMenu() throws IOException, URISyntaxException {
-        int op = -1;
+        int op = 0;
         System.out.println("Bienvenidos al menu de API ebook");
-
-
-
-
         do {
             try {
                 System.out.println("""
@@ -39,29 +35,38 @@ public class Menu {
                         7.Buscar libros por idiomas
                         8.Estadisticas de los libros
                         9.Buscar autor por nombre
+                        10.Buscada mejorada de libros
                         0.Salir""");
                 switch (op = scanner.nextInt()) {
                     case 0:
-                        scanner.nextLine();
+                        System.out.println("Hilo bloqueado");
+                        op=0;
                         //Thread.sleep(2000);
-                        return;
+                        break;
                     case 1:
+                        scanner.nextLine();
                         var allBooks = authorService.allBooks();
                         if (allBooks == null || allBooks.isEmpty()) {
                             System.out.println("No hay libros cargados");
                             break;
                         }
+                        scanner.nextLine();
                         allBooks.forEach(System.out::println);
                         break;
                     case 2:
                         scanner.nextLine();
-                        System.out.println("Ingrese el nombre del titulo del libro ");
-                        String title = scanner.nextLine();
-                        var s = authorService.findByTitle(title);
-                        System.out.println("libroDto resultado->" + s);
-                        //System.out.println(ColoursConsole.paintFontBackground("BGGREEN","RED","Archivo guardado con exito"));
+                        String nameAuthors;
+                        System.out.println("Ingrese el nombre del libro");
+                        nameAuthors=scanner.nextLine();
+                        var result=authorService.searchBook(nameAuthors);
+                        if(result!=null){
+                            System.out.println(result);
+                            break;
+                        }
                         break;
+
                     case 3:
+                        scanner.nextLine();
                         System.out.println(ColoursConsole.paintFont("yellow", "NOTA los autores se registran buscando libro no existentes"));
                         var allAuthors = authorService.allAuthors();
                         System.out.println(allAuthors);
@@ -77,6 +82,7 @@ public class Menu {
                                 4.Fantasia Ficcion
                                 5.Desconocido""");
                         ops = scanner.nextInt();
+                        scanner.nextLine();
                         if (ops > 0 && ops < 6) {
                             var booksByGender = authorService.listByTopic(Gender.getGender(ops));
                             if (!booksByGender.isEmpty()) {
@@ -86,9 +92,10 @@ public class Menu {
                             System.out.println(ColoursConsole.paintFont(ColoursConsole.YELLOW, "No ha ingresado un genero valido intentelo nuevamente"));
 
                         }
-                        Thread.sleep(3000);
+                        //Thread.sleep(3000);
                         break;
                     case 5:
+                        scanner.nextLine();
                         var top5Books = authorService.top5Books();
                         if (top5Books.isEmpty()) {
                             System.out.println(ColoursConsole.paintFont("yellow", "no se encontraron libros"));
@@ -101,6 +108,7 @@ public class Menu {
                         int year;
                         System.out.println("Ingrese el anio que desea buscar");
                         year = scanner.nextInt();
+                        scanner.nextLine();
                         if (year <= 0) {
                             System.out.println("no ha ingresado un valor valido");
                             break;
@@ -113,10 +121,10 @@ public class Menu {
                         subMenuLanguages();
                         break;
                     case 8:
+                        scanner.nextLine();
                         String stadistic=authorService.booksStadistics();
                         System.out.println(stadistic);
                         break;
-
                     case 9:
                         scanner.nextLine();
                         String authorName;
@@ -130,9 +138,7 @@ public class Menu {
                         }
                         break;
                     case 10:
-                        var resultado=authorService.getTitle("symbolic");
-                        System.out.println(resultado);
-                        break;
+
                     default:
                         System.out.println("No ha seleccionado una opcion correcta");
                         break;
@@ -140,13 +146,12 @@ public class Menu {
 
             } catch (InputMismatchException e) {
                 System.out.println("no ha ingresado una opcion valida intentelo nuevamente");
-                scanner.nextLine();
-            } catch (InterruptedException e) {
-                System.out.println("ups");
-            } catch (Exception e) {
+            }catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("hilo bloqueado 4");
                 System.out.println(e.getMessage());
                 System.out.println("err");
-            } finally {
+            }finally {
                 scanner.nextLine();
             }
 
@@ -155,6 +160,7 @@ public class Menu {
     }
 
     private void subMenuLanguages() {
+        scanner.nextLine();
         String codeLan = "";
         System.out.println("""
                 Selecciones el idioma del libro que desea buscar
@@ -167,13 +173,15 @@ public class Menu {
             case 2 -> codeLan = "es";
             case 3 -> codeLan = "fr";
             case 4 -> codeLan = "de";
-            default -> System.out.println("opcion incorrecta intentelo nuevamente");
+            default ->{ System.out.println("opcion incorrecta intentelo nuevamente");
+                scanner.nextLine();
+            }
         }
         if (!codeLan.isEmpty()) {
             var listByLang = authorService.listByLanguage(codeLan);
             listByLang.forEach(System.out::println);
 
         }
-        scanner.nextLine();
+
     }
 }
