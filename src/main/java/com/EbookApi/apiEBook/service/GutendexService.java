@@ -45,6 +45,7 @@ GutendexService {
     public Book searchBookGuntendex(String title) throws IOException, URISyntaxException {
         String url = urlBase + "search=" + title.replace(" ", "%20");
         DateResult result = transformData.deserializarEntity(new URL(url), DateResult.class);
+        System.out.println(result.toString());
        return result.results().stream()
                 .filter(dateBook -> dateBook.title().equalsIgnoreCase(title))
                 .map(this::getBook2)

@@ -39,8 +39,8 @@ public class Menu {
                         0.Salir""");
                 switch (op = scanner.nextInt()) {
                     case 0:
-                        System.out.println("Hilo bloqueado");
-                        op=0;
+                        //System.out.println("Hilo bloqueado");
+                        //op=0;
                         //Thread.sleep(2000);
                         break;
                     case 1:

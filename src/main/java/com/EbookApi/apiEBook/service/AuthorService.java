@@ -9,7 +9,6 @@ import com.EbookApi.apiEBook.model.Gender;
 import com.EbookApi.apiEBook.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -58,7 +57,7 @@ public class AuthorService {
 
     //obtiene una lista de autoresdto vivos en x anio
     public List<AuthorDTO> listAuthorByYear(int year) {
-        return allAuthors().stream()
+        return allAuthors().stream().parallel()
                 .filter(author -> author.deathDeath() >= year && author.birthDate() <= year)
                 .map(author -> new AuthorDTO(author.fullName(), author.birthDate(), author.deathDeath()))
                 .collect(Collectors.toList());
@@ -102,6 +101,7 @@ public class AuthorService {
     public BookDto searchBook(String title) throws IOException, URISyntaxException {
         BookDto book = getBookDb(title);
         if (book != null) {
+            System.out.println(ColoursConsole.paintFontBackground("BGBLUE","BLACK","Se ha encontrado el libro..."));
             return book;
         } else {
             Book bookGutendex = gutendexService.searchBookGuntendex(title);
@@ -109,6 +109,7 @@ public class AuthorService {
                 System.out.println(ColoursConsole.paintFontBackground("BGYELLOW", "RED", "No se ha encontrado el libro solicitado"));
                 return null;
             }
+
             Author author = authorExist(bookGutendex.getAuthor().getFullName());
             if (author != null) {
                 List<Book> bookAux = new ArrayList<>();
@@ -116,6 +117,7 @@ public class AuthorService {
                 bookAux.add(bookGutendex);
                 author.getListaBook().addAll(bookAux);
                 authorRepository.save(author);
+                System.out.println(ColoursConsole.paintFontBackground("BGPURPLE","BLACK","Autor Actualizado devolviendo libro..."));
             } else {
                 authorRepository.save(bookGutendex.getAuthor());
             }
