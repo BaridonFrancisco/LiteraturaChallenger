@@ -21,9 +21,9 @@ En caso, que no se encuentre el libro consumira otra API para encontrarlo.
 
 ![badge literalura.png](badge%20literalura.png)
 
-## Caracteristicas del Proyecto
+## 🧰 Caracteristicas del Proyecto
 El proyecto permite la busqueda de libros en el catálogo en caso de no encontrarlo consumira otra API para encontrarlo.
-### 🧰 Funciones
+###  Funciones
 El catálogo presenta las siguientes funciones
 - Mostrar todos los libros disponibles
 - Guardar libros
@@ -38,10 +38,12 @@ El catálogo presenta las siguientes funciones
 
 
 ## 💽 Demo
+Video demostrativo de como funciona la aplicacion
+
+[![catalogo_libros](img.png)](https://www.youtube.com/watch?v=QkouvLtLunE)
 
 
-
-## Instalacion
+## ⚙️ Instalacion
 
 ## Redes
 
