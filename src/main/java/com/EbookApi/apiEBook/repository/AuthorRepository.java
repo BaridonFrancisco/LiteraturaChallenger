@@ -14,7 +14,7 @@ public interface AuthorRepository extends JpaRepository<Author,Long> {
     @Query("SELECT a FROM Author a JOIN a.listaBook lb WHERE lb.title LIKE :bookTitle")
     Optional<Author> findAuthorByTitle(@Param("bookTitle")String bookTitle);
 
-    Optional<Author>findByFullName(String name);
+    Optional<Author> findByFullNameIgnoreCase(String name);
 
     @Query("SELECT b FROM Book b")
     List<Book>allBooks();

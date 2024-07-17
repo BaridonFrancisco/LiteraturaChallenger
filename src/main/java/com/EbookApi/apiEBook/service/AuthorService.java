@@ -22,7 +22,7 @@ public class AuthorService {
 
 
     public AuthorDTO searchAuthorByName(String nameAuthor) throws IOException, URISyntaxException {
-        Optional<Author> authorDb = authorRepository.findByFullName(nameAuthor);
+        Optional<Author> authorDb = authorRepository.findByFullNameIgnoreCase(nameAuthor);
         AuthorDTO author = null;
         if (authorDb.isPresent()) {
             author = authorDb.map(a -> new AuthorDTO(a.getFullName(), a.getBirthDate(), a.getDeathDate()))
@@ -43,7 +43,7 @@ public class AuthorService {
 
     //verifica si un autor existe en la base de datos
     private Author authorExist(String fullName) {
-        Optional<Author> author = authorRepository.findByFullName(fullName);
+        Optional<Author> author = authorRepository.findByFullNameIgnoreCase(fullName);
         return author.orElse(null);
 
     }
@@ -105,6 +105,8 @@ public class AuthorService {
             return book;
         } else {
             Book bookGutendex = gutendexService.searchBookGuntendex(title);
+            System.out.println(bookGutendex);
+
             if (bookGutendex == null) {
                 System.out.println(ColoursConsole.paintFontBackground("BGYELLOW", "RED", "No se ha encontrado el libro solicitado"));
                 return null;
@@ -119,6 +121,16 @@ public class AuthorService {
                 authorRepository.save(author);
                 System.out.println(ColoursConsole.paintFontBackground("BGPURPLE","BLACK","Autor Actualizado devolviendo libro..."));
             } else {
+                System.out.println("acaaa");
+                System.out.println(bookGutendex);
+
+
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 authorRepository.save(bookGutendex.getAuthor());
             }
 
@@ -151,7 +163,7 @@ public class AuthorService {
 
     //De
     //buscar un libro por titulo en la base de datos sino lo encuentra lo busca en gutendex
-    @Deprecated
+
     public BookDto findByTitle(String title) throws IOException, URISyntaxException {
         Optional<Author> authorByTitle = authorRepository.findAuthorByTitle(title);
         //Buscar un libro en el autor si esta presente lo devuelve
@@ -178,6 +190,7 @@ public class AuthorService {
             }
             //Retorna un Author de la base de datos si existe
             Author authorDb = authorExist(newAuthor.getFullName());
+            System.out.println("Autor base de datos "+authorDb);
 
             if (authorDb != null) {
                 var res = authorDb.getListaBook().stream()

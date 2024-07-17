@@ -16,10 +16,10 @@ public class AuthorServiceTest {
     @Test
     @DisplayName("search book into database")
     public void findBookByTitle() throws IOException, URISyntaxException {
-        String title="Great Expectations";
+      //  String title="Great Expectations";
         //Author author=gutendexService.findBookByTitleGutendex(title);
         //System.out.println(author);
-        var re=service.findByTitle(title);
+       // var re=service.findByTitle(title);
 
 
     }

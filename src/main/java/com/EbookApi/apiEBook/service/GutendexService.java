@@ -69,7 +69,7 @@ GutendexService {
     private Author getAuthor(List<DateAuthors> listAuthors) {
         return listAuthors.stream()
                 .findFirst()
-                .map(author -> new Author(author.name(),
+                .map(author -> new Author(removerComa(author.name()),
                         Integer.parseInt(author.birthDate()),
                         Integer.parseInt(author.deathYear()),
                         null)).orElse(null);
@@ -138,12 +138,15 @@ GutendexService {
 
     private Book getBook2(DateBook dateBook) {
        var autorAux= dateBook.listaAutores().stream()
-                .map(author->new Author(author.name(),Integer.parseInt(author.birthDate()),Integer.parseInt(author.deathYear()),null))
+                .map(author->new Author(removerComa(author.name()),Integer.parseInt(author.birthDate()),Integer.parseInt(author.deathYear()),null))
                 .findFirst().orElse(null);
         return new Book(autorAux, dateBook.copyright()
                 , getGender(dateBook.gender()),
                 Arrays.toString(dateBook.languages()),
                 dateBook.downloadCount(), dateBook.title());
+    }
+    private String removerComa(String str){
+        return str.replace(",","");
     }
 
 

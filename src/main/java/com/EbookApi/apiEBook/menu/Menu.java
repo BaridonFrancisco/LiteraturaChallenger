@@ -35,7 +35,6 @@ public class Menu {
                         7.Buscar libros por idiomas
                         8.Estadisticas de los libros
                         9.Buscar autor por nombre
-                        10.Buscada mejorada de libros
                         0.Salir""");
                 switch (op = scanner.nextInt()) {
                     case 0:
@@ -58,7 +57,7 @@ public class Menu {
                         String nameAuthors;
                         System.out.println("Ingrese el nombre del libro");
                         nameAuthors=scanner.nextLine();
-                        var result=authorService.searchBook(nameAuthors);
+                        var result=authorService.findByTitle(nameAuthors);
                         if(result!=null){
                             System.out.println(result);
                             break;
@@ -138,6 +137,7 @@ public class Menu {
                         }
                         break;
                     case 10:
+                        break;
 
                     default:
                         System.out.println("No ha seleccionado una opcion correcta");
